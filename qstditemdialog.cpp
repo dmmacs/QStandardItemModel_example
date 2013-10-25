@@ -96,20 +96,15 @@ void QstdItemDialog::on_pushButton_clicked()
     QDomElement root = xmldoc.firstChildElement(DirTagName);
     qDebug() << root.attribute(DirAttrName);
 
-    ProcessXMLData(&root, item);
 
-
-
-#if 0
-    QDomElement root = xmldoc.firstChildElement(DirTagName);
-    qDebug() << root.attribute(DirAttrName);
+    // Add the Root node
     QStandardItem *tmpNode;
-
     tmpNode = new QStandardItem(root.attribute(DirAttrName));
     item->appendRow(tmpNode);
 
-    item = item->child()
+    ProcessXMLData(&root, tmpNode);
 
+#if 0
 
     root = root.firstChildElement();
     qDebug() <<"Root = " << root.attribute(DirAttrName);
@@ -138,6 +133,9 @@ void QstdItemDialog::on_pushButton_clicked()
 
 void QstdItemDialog::ProcessXMLData(QDomElement *rootxml, QStandardItem *rootNode)
 {
+
+
+
 #if 0
     QDomElement nextItem;
     nextItem = rootxml->nextSiblingElement(DirTagName);
