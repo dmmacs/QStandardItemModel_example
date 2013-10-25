@@ -6,6 +6,8 @@
 #include <QtCore>
 #include <QtGui>
 #include <QStandardItem>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomElement>
 
 namespace Ui {
 class QstdItemDialog;
@@ -19,11 +21,18 @@ public:
     explicit QstdItemDialog(QWidget *parent = 0);
     ~QstdItemDialog();
 
+private slots:
+    void on_pushButton_clicked();
+
 private:
     Ui::QstdItemDialog *ui;
 
     QStandardItemModel *StdModel;
 
+    QDomDocument xmldoc;
+
+    void ParseXMLFile(QString sPath, QDomDocument *xmlDoc);
+    void ProcessXMLData(QDomElement *rootxml, QStandardItem *rootNode);
 };
 
 #endif // QSTDITEMDIALOG_H
