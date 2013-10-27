@@ -39,31 +39,6 @@ void QstdItemDialog::on_pushButton_clicked()
     qDebug() << sFname;
     ui->textEdit->setText(sFname);
 
-    if (ui->textEdit->toPlainText() != "")
-    {
-        // Clear the Tree
-        StdModel->clear();
-
-        ParseXMLFile("C:/Users/dmmacs/Documents/Qt Projects/QFileSystemModel/tmp.xml", &xmldoc);
-
-        // Get Root of Tree and XML
-        QStandardItem *Node = StdModel->invisibleRootItem();
-        QDomElement root = xmldoc.firstChildElement(DirTagName);
-
-        // Add the Root node
-        qDebug() << root.attribute(DirAttrName);
-
-        // Add the node
-        QStandardItem *tmpNode;
-        tmpNode = new QStandardItem(root.attribute(DirAttrName));
-        Node->appendRow(tmpNode);
-
-        root = root.firstChildElement(DirTagName);
-
-        ProcessXMLData(&root, tmpNode, "  ");
-        ui->treeView->expandAll();
-
-    }
 }
 
 void QstdItemDialog::ParseXMLFile(QString sPath, QDomDocument *xmlDoc)
@@ -85,6 +60,25 @@ void QstdItemDialog::ParseXMLFile(QString sPath, QDomDocument *xmlDoc)
         file.close();
     }
 
+}
+
+void QstdItemDialog::SaveXMLFile(QString sPath, QDomDocument *xmlDoc)
+{
+    QFile file(sPath);
+
+    qDebug() << sPath;
+
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qDebug() << "Failed to open file";
+        ui->textEdit->setText("Failed to open file");
+    }
+    else
+    {
+        QTextStream TextStream(&file);
+        xmlDoc->save(TextStream,0);
+        file.close();
+    }
 }
 
 void QstdItemDialog::ProcessXMLData(QDomElement *rootxml, QStandardItem *rootNode, QString tabStr)
@@ -116,3 +110,42 @@ void QstdItemDialog::ProcessXMLData(QDomElement *rootxml, QStandardItem *rootNod
 
 }
 
+
+
+void QstdItemDialog::on_pBLoad_clicked()
+{
+    if (ui->textEdit->toPlainText() != "")
+    {
+        // Clear the Tree
+        StdModel->clear();
+
+        ParseXMLFile("C:/Users/dmmacs/Documents/Qt Projects/QFileSystemModel/tmp.xml", &xmldoc);
+
+        // Get Root of Tree and XML
+        QStandardItem *Node = StdModel->invisibleRootItem();
+        QDomElement root = xmldoc.firstChildElement(DirTagName);
+
+        // Add the Root node
+        qDebug() << root.attribute(DirAttrName);
+
+        // Add the node
+        QStandardItem *tmpNode;
+        tmpNode = new QStandardItem(root.attribute(DirAttrName));
+        Node->appendRow(tmpNode);
+
+        root = root.firstChildElement(DirTagName);
+
+        ProcessXMLData(&root, tmpNode, "  ");
+        ui->treeView->expandAll();
+
+    }
+
+}
+
+void QstdItemDialog::on_pBSave_clicked()
+{
+    if (ui->textEdit->toPlainText() != "")
+    {
+        SaveXMLFile(ui->textEdit->toPlainText(), &xmldoc);
+    }
+}

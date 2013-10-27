@@ -25,6 +25,10 @@ public:
 private slots:
     void on_pushButton_clicked();
 
+    void on_pBLoad_clicked();
+
+    void on_pBSave_clicked();
+
 private:
     Ui::QstdItemDialog *ui;
 
@@ -34,6 +38,7 @@ private:
     QDir directory;
 
     void ParseXMLFile(QString sPath, QDomDocument *xmlDoc);
+    void SaveXMLFile(QString sPath, QDomDocument *xmlDoc);
     void ProcessXMLData(QDomElement *rootxml, QStandardItem *rootNode, QString tabStr);
 };
 
