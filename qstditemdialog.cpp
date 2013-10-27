@@ -24,7 +24,7 @@ QstdItemDialog::QstdItemDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Qs
     ui->treeView->setModel(StdModel);
     ui->treeView->expandAll();
 
-    ui->textEdit->setText("C:/Users/dmmacs/Documents/Qt Projects/QFileSystemModel/tmp.xml");
+//    ui->textEdit->setText("C:/Users/dmmacs/Documents/Qt Projects/QFileSystemModel/tmp.xml");
 }
 
 QstdItemDialog::~QstdItemDialog()
@@ -34,6 +34,11 @@ QstdItemDialog::~QstdItemDialog()
 
 void QstdItemDialog::on_pushButton_clicked()
 {
+    QString sFname = QFileDialog::getOpenFileName(this,tr("Open File"),directory.path(),tr("Files(*.*)"));
+
+    qDebug() << sFname;
+    ui->textEdit->setText(sFname);
+
     if (ui->textEdit->toPlainText() != "")
     {
         // Clear the Tree

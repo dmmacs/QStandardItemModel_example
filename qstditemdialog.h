@@ -8,6 +8,7 @@
 #include <QStandardItem>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomElement>
+#include <QFileDialog>
 
 namespace Ui {
 class QstdItemDialog;
@@ -30,6 +31,7 @@ private:
     QStandardItemModel *StdModel;
 
     QDomDocument xmldoc;
+    QDir directory;
 
     void ParseXMLFile(QString sPath, QDomDocument *xmlDoc);
     void ProcessXMLData(QDomElement *rootxml, QStandardItem *rootNode, QString tabStr);
