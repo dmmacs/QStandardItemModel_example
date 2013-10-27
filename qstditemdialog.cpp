@@ -23,11 +23,42 @@ QstdItemDialog::QstdItemDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Qs
 
     ui->treeView->setModel(StdModel);
     ui->treeView->expandAll();
+
+    ui->textEdit->setText("C:/Users/dmmacs/Documents/Qt Projects/QFileSystemModel/tmp.xml");
 }
 
 QstdItemDialog::~QstdItemDialog()
 {
     delete ui;
+}
+
+void QstdItemDialog::on_pushButton_clicked()
+{
+    if (ui->textEdit->toPlainText() != "")
+    {
+        // Clear the Tree
+        StdModel->clear();
+
+        ParseXMLFile("C:/Users/dmmacs/Documents/Qt Projects/QFileSystemModel/tmp.xml", &xmldoc);
+
+        // Get Root of Tree and XML
+        QStandardItem *Node = StdModel->invisibleRootItem();
+        QDomElement root = xmldoc.firstChildElement(DirTagName);
+
+        // Add the Root node
+        qDebug() << root.attribute(DirAttrName);
+
+        // Add the node
+        QStandardItem *tmpNode;
+        tmpNode = new QStandardItem(root.attribute(DirAttrName));
+        Node->appendRow(tmpNode);
+
+        root = root.firstChildElement(DirTagName);
+
+        ProcessXMLData(&root, tmpNode, "  ");
+        ui->treeView->expandAll();
+
+    }
 }
 
 void QstdItemDialog::ParseXMLFile(QString sPath, QDomDocument *xmlDoc)
@@ -49,106 +80,34 @@ void QstdItemDialog::ParseXMLFile(QString sPath, QDomDocument *xmlDoc)
         file.close();
     }
 
-
-    //get the root element
-    QDomElement root = xmlDoc->firstChildElement();
-    QDomNodeList items = root.elementsByTagName(DirTagName);
-
-//     qDebug() << "Total items = " << items.count();
-     QString tmp_str;
-     tmp_str = "Total items  = ";
-     QLocale tmpLoc;
-     tmp_str += tmpLoc.toString(items.count());
-//     tmp_str += QLocale::toString(i);
-
-
-     ui->textEdit->setText(tmp_str);
-
-     for(int i = 0; i < items.count(); i++)
-     {
-        QDomNode itemnode = items.at(i);
-
-        //convert to element
-        if(itemnode.isElement())
-        {
-            QDomElement itemele = itemnode.toElement();
-//            qDebug() << itemele.attribute(DirAttrName);
-            tmp_str = ui->textEdit->toPlainText();
-            tmp_str += "\n";
-            tmp_str += itemele.attribute("name");
-            ui->textEdit->setText(tmp_str);
-        }
-     }
 }
 
-void QstdItemDialog::on_pushButton_clicked()
+void QstdItemDialog::ProcessXMLData(QDomElement *rootxml, QStandardItem *rootNode, QString tabStr)
 {
-    ParseXMLFile("C:/Users/dmmacs/Documents/Qt Projects/QFileSystemModel/tmp.xml", &xmldoc);
-
-    QStandardItem *item = StdModel->invisibleRootItem();
-    //    QStandardItem *tmp3, *tmp4;
-
-    //    tmp3 = new QStandardItem("test1");
-    //    tmp4 = new QStandardItem("Test2");
-    //    item->appendRow(tmp3);
-    //    tmp3->appendRow(tmp4);
-
-    QDomElement root = xmldoc.firstChildElement(DirTagName);
-    qDebug() << root.attribute(DirAttrName);
-
-
-    // Add the Root node
     QStandardItem *tmpNode;
-    tmpNode = new QStandardItem(root.attribute(DirAttrName));
-    item->appendRow(tmpNode);
-
-    ProcessXMLData(&root, tmpNode);
-
-#if 0
-
-    root = root.firstChildElement();
-    qDebug() <<"Root = " << root.attribute(DirAttrName);
-    tmpNode = new QStandardItem(root.attribute(DirAttrName));
-    item->appendRow(tmpNode);
-    ProcessXMLData(&root, item);
-#endif
-
-#if 0
-    QDomNodeList items = root.elementsByTagName("dir");
-
-    for (int i = 0; i < items.count(); i++)
-    {
-        QDomNode itemNode = items.at(i);
-        //Convert to element
-        if (itemNode.isElement())
-        {
-            QStandardItem *treeNode;
-            QDomElement itemEle = itemNode.toElement();
-            treeNode = new QStandardItem(itemEle.attribute("name"));
-            item->appendRow(treeNode);
-        }
-    }
-#endif
-}
-
-void QstdItemDialog::ProcessXMLData(QDomElement *rootxml, QStandardItem *rootNode)
-{
-
-
-
-#if 0
     QDomElement nextItem;
-    nextItem = rootxml->nextSiblingElement(DirTagName);
-    qDebug() << nextItem.isNull() << "," << nextItem.attribute(DirAttrName);
+    QDomElement childItem;
 
-    while (!nextItem.isNull())
+    nextItem = *rootxml;
+    while (nextItem.isNull() == FALSE)
     {
-        QStandardItem *tmpNode;
+        qDebug() << tabStr << nextItem.attribute(DirAttrName);
         tmpNode = new QStandardItem(nextItem.attribute(DirAttrName));
         rootNode->appendRow(tmpNode);
-
+//        tmpNode = new QStandardItem(nextItem.attribute(DirAttrName));
+        if (nextItem.hasChildNodes())
+        {
+            childItem = nextItem.firstChildElement();
+            QString tmp;
+            tmp = tabStr + "  ";
+            ProcessXMLData(&childItem, tmpNode, tmp);
+        }
+        else
+        {
+//            rootNode->appendRow(tmpNode);
+        }
         nextItem = nextItem.nextSiblingElement(DirTagName);
     }
-#endif
+
 }
 

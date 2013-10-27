@@ -32,7 +32,7 @@ private:
     QDomDocument xmldoc;
 
     void ParseXMLFile(QString sPath, QDomDocument *xmlDoc);
-    void ProcessXMLData(QDomElement *rootxml, QStandardItem *rootNode);
+    void ProcessXMLData(QDomElement *rootxml, QStandardItem *rootNode, QString tabStr);
 };
 
 #endif // QSTDITEMDIALOG_H
